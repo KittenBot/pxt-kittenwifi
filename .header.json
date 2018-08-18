@@ -1,0 +1,20 @@
+{
+    "target": "microbit",
+    "targetVersion": "1.1.40",
+    "name": "kittenwifi",
+    "meta": {},
+    "editor": "blocksprj",
+    "pubId": "",
+    "pubCurrent": false,
+    "_rev": null,
+    "id": "e5af4176-1bb2-49cd-daa2-28b0670eefec",
+    "recentUse": 1534588114,
+    "modificationTime": 1534588068,
+    "blobId": null,
+    "blobVersion": null,
+    "blobCurrent": false,
+    "isDeleted": false,
+    "path": "pxt-kittenwifi",
+    "githubCurrent": false,
+    "saveId": null
+}
