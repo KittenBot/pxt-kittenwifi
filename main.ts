@@ -30,7 +30,7 @@ namespace kittenwifi {
         for (let i = 0; i < v.length; i++) {
             if (v.charAt(i) == ' ' || v.charAt(i) == '\r' || v.charAt(i) == '\n') {
                 let ret = v.substr(0, i)
-                v = v.substr(i+1)
+                v = v.substr(i + 1)
                 return ret;
             }
         }
@@ -46,13 +46,12 @@ namespace kittenwifi {
             let cmd = parseInt(seekNext())
             let argc = parseInt(seekNext())
             let cb = parseInt(seekNext())
-            
+
             serial.writeValue('CMD', cmd)
             serial.writeValue('argc', argc)
             serial.writeValue('cb', cb)
         }
     })
-
 
     /**
      * Wifi connection io init
@@ -73,7 +72,9 @@ namespace kittenwifi {
     //% blockId=wifi_join block="Wifi Join Aceess Point|%ap Password|%pass"
     //% weight=98
     export function wifi_join(ap: string, pass: string): void {
-
+        let cmd: string = 'WF 52 2 52 '+ap+' '+pass+'\n'
+        serial.writeString(cmd)
+        basic.pause(500) // it may took longer to finshed the ap join process
     }
 
     /**
@@ -108,7 +109,6 @@ namespace kittenwifi {
     export function mqtt_publish(topic: string, data: string): void {
 
     }
-
 
     /**
      * Set MQTT subscribe topic
