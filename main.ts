@@ -7,6 +7,52 @@ load dependency
 
 //% color="#31C7D5" weight=10 icon="\uf1eb"
 namespace kittenwifi {
+    const CMD_SYNC = 1;
+    const CMD_RESP_V = 2;
+    const CMD_RESP_CB = 3;
+    const CMD_WIFISTATUS = 4;
+    const CMD_WIFIINFO = 8;
+    const CMD_SETHOSTNAME = 9;
+    const CMD_MQTT_SETUP = 10;
+    const CMD_MQTT_PUB = 11;
+    const CMD_MQTT_SUB = 12;
+    const CMD_MQTT_SETHOST = 15;
+    const CMD_REST_SETUP = 20;
+    const CMD_REST_REQ = 21;
+    const CMD_SOCK_SETUP = 40;
+    const CMD_SOCK_SEND = 41;
+    const CMD_SOCK_DATA = 42;
+    const CMD_WIFI_SELECT = 52;
+
+    let v: string;
+
+    function seekNext(): string {
+        for (let i = 0; i < v.length; i++) {
+            if (v.charAt(i) == ' ' || v.charAt(i) == '\r' || v.charAt(i) == '\n') {
+                let ret = v.substr(0, i)
+                v = v.substr(i+1)
+                return ret;
+            }
+        }
+        return '';
+    }
+
+    serial.onDataReceived('\n', function () {
+        v = serial.readUntil('\n')
+        let argv: string[] = []
+        if (v.charAt(0) == 'W' && v.charAt(1) == 'F') {
+            v = v.substr(3)
+            serial.writeLine(v)
+            let cmd = parseInt(seekNext())
+            let argc = parseInt(seekNext())
+            let cb = parseInt(seekNext())
+            
+            serial.writeValue('CMD', cmd)
+            serial.writeValue('argc', argc)
+            serial.writeValue('cb', cb)
+        }
+    })
+
 
     /**
      * Wifi connection io init
