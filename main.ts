@@ -37,6 +37,12 @@ namespace kittenwifi {
         return '';
     }
 
+    /* // no tostring for integer
+    function sendCmd(cmdType: number, argc: number, cb: number, extra: string){
+        serial.writeString()
+    }
+    */
+
     serial.onDataReceived('\n', function () {
         v = serial.readUntil('\n')
         let argv: string[] = []
@@ -85,7 +91,9 @@ namespace kittenwifi {
     //% weight=96
     //% blockGap=50
     export function wifi_changename(name: string): void {
-
+        let cmd: string = 'WF 9 1 9 '+name+'\n'
+        serial.writeString(cmd)
+        basic.pause(500)
     }
 
     /**
@@ -96,7 +104,9 @@ namespace kittenwifi {
     //% blockId=mqtt_sethost block="MQTT Set Host|%host clientID|%clientid"
     //% weight=90
     export function mqtt_sethost(host: string, clientid: string): void {
-
+        let cmd: string = 'WF 15 2 15 '+host+' '+clientid+'\n'
+        serial.writeString(cmd)
+        basic.pause(500)
     }
 
     /**
@@ -107,7 +117,9 @@ namespace kittenwifi {
     //% blockId=mqtt_publish block="MQTT publish|%topic|Data %data"
     //% weight=86
     export function mqtt_publish(topic: string, data: string): void {
-
+        let cmd: string = 'WF 11 2 11 '+topic+' '+data+'\n'
+        serial.writeString(cmd)
+        basic.pause(500)
     }
 
     /**
@@ -119,7 +131,7 @@ namespace kittenwifi {
     //% weight=84
     //% blockGap=50
     export function mqtt_subscribe(topic: string, handler: (data: string) => void): void {
-
+        
     }
 
     /**
