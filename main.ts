@@ -28,7 +28,9 @@ namespace kittenwifi {
         MQTT_CONN = 2,
         MQTT_DISCON = 3,
         MQTT_PUB = 4,
-        MQTT_DATA = 5
+        MQTT_DATA = 5,
+        UDP_SETUP = 6,
+        UDP_DATA = 7
     }
     type EvtStr = (data: string) => void;
     type EvtNum = (data: number) => void;
@@ -108,10 +110,11 @@ namespace kittenwifi {
         basic.pause(500)
         serial.readString()
         serial.writeString('\n\n')
-        basic.pause(200)
+        basic.pause(1000)
         serial.writeString("WF 1 0 1\n") // sync command to add wifi status callback
-        basic.pause(200)
+        basic.pause(1000)
         serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
+        basic.pause(1000)
     }
 
     //% blockId=wifi_join block="Wifi Join Aceess Point|%ap Password|%pass"
@@ -167,9 +170,9 @@ namespace kittenwifi {
     //% blockId=mqtt_publish block="MQTT publish|%topic|Data %data"
     //% weight=86
     export function mqtt_publish(topic: string, data: string): void {
-        let cmd: string = 'WF 11 2 11 ' + topic + ' ' + data + '\n'
+        let cmd: string = 'WF 11 5 11 ' + topic + ' ' + data + ' '+ data.length + ' 0 0\n'
         serial.writeString(cmd)
-        basic.pause(500)
+        basic.pause(200) // limit user pub rate
     }
 
     /**
@@ -203,12 +206,14 @@ namespace kittenwifi {
 
     /**
      * UDP communication
+     * @param addr Remote ip; eg: 192.168.0.100
      * @param port UDP port; eg: 1234
     */
-    //% blockId=udp_comm block="UDP Communication|%port"
+    //% blockId=udp_comm block="start UDP Communication |%port"
     //% weight=80
-    export function udp_comm(port: number): void {
-
+    export function udp_comm(addr: string, port: number): void {
+        serial.writeString("WF 40 3 6 " + addr + ' ' + port + ' 3\n')
+        basic.pause(500)
     }
 
     /**
@@ -217,16 +222,20 @@ namespace kittenwifi {
      * @param port UDP port; eg: 1234
      * @param data UDP data; eg: hello
     */
-    //% blockId=udp_send block="UDP Send %addr port|%port |%data"
+    //% blockId=udp_send block="UDP Send %data"
     //% weight=78
-    export function udp_send(addr: string, port: number, data: string): void {
+    export function udp_send( addr: string, data: string): void {
 
     }
 
-    //% blockId=udp_ondata block="on UDP data"
+    /**
+     * on UDP data
+     * @param addr Remote ip; eg: 192.168.0.100
+    */
+    //% blockId=udp_ondata block="on UDP %addr data"
     //% weight=76
     //% blockGap=50
-    export function udp_ondata(handler: (data: string) => void): void {
+    export function udp_ondata(addr: string ,handler: (data: string) => void): void {
 
     }
 
