@@ -4,7 +4,6 @@ load dependency
 "kittenwifi": "file:../pxt-kittenwifi"
 */
 
-
 //% color="#31C7D5" weight=10 icon="\uf1eb"
 namespace kittenwifi {
     const CMD_SYNC = 1;
@@ -24,16 +23,32 @@ namespace kittenwifi {
     const CMD_SOCK_DATA = 42;
     const CMD_WIFI_SELECT = 52;
 
+    export enum Callback {
+        WIFI_STATUS_CHANGED = 1,
+        MQTT_CONN = 2,
+        MQTT_DISCON = 3,
+        MQTT_PUB = 4,
+        MQTT_DATA = 5
+    }
+    type EvtStr = (data: string) => void;
+    type EvtNum = (data: number) => void;
+
     let v: string;
+    // no map support for ts over microbit
+    let mqttCbCnt = 0;
+    let mqttCb: EvtStr[] = [null, null, null, null, null, null, null, null];
+    let mqttCbKey: string[] = ['', '', '', '', '', '', '' ,''];
+    let wifiStatusChanged: EvtNum;
 
     function seekNext(): string {
         for (let i = 0; i < v.length; i++) {
             if (v.charAt(i) == ' ' || v.charAt(i) == '\r' || v.charAt(i) == '\n') {
                 let ret = v.substr(0, i)
-                v = v.substr(i + 1)
+                v = v.substr(i + 1, v.length - i)
                 return ret;
             }
         }
+
         return '';
     }
 
@@ -43,19 +58,36 @@ namespace kittenwifi {
     }
     */
 
+    function parseCallback(cb: number) {
+        if (Callback.WIFI_STATUS_CHANGED == cb) {
+            wifiStatusChanged(parseInt(seekNext()))
+        } else if (Callback.MQTT_DATA == cb) {
+            let topic: string = seekNext()
+            let data: string = seekNext()
+            for (let i = 0; i < 5; i++) {
+                let cmp = mqttCbKey[i].compare(topic)
+                if (cmp == 0) {
+                    mqttCb[i](data)
+                    break;
+                }
+            }
+        }
+    }
+
     serial.onDataReceived('\n', function () {
-        v = serial.readUntil('\n')
+        v = serial.readString()
         let argv: string[] = []
         if (v.charAt(0) == 'W' && v.charAt(1) == 'F') {
-            v = v.substr(3)
-            serial.writeLine(v)
+            v = v.substr(3, v.length - 3)+' '
             let cmd = parseInt(seekNext())
             let argc = parseInt(seekNext())
             let cb = parseInt(seekNext())
 
-            serial.writeValue('CMD', cmd)
-            serial.writeValue('argc', argc)
-            serial.writeValue('cb', cb)
+            //  todo: is there an async way to handle response value?
+            if (cmd == CMD_RESP_CB) {
+                parseCallback(cb)
+            }
+
         }
     })
 
@@ -73,12 +105,19 @@ namespace kittenwifi {
             rx,
             BaudRate.BaudRate115200
         )
+        basic.pause(500)
+        serial.readString()
+        serial.writeString('\n\n')
+        basic.pause(200)
+        serial.writeString("WF 1 0 1\n") // sync command to add wifi status callback
+        basic.pause(200)
+        serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
     }
 
     //% blockId=wifi_join block="Wifi Join Aceess Point|%ap Password|%pass"
     //% weight=98
     export function wifi_join(ap: string, pass: string): void {
-        let cmd: string = 'WF 52 2 52 '+ap+' '+pass+'\n'
+        let cmd: string = 'WF 52 2 52 ' + ap + ' ' + pass + '\n'
         serial.writeString(cmd)
         basic.pause(500) // it may took longer to finshed the ap join process
     }
@@ -89,12 +128,23 @@ namespace kittenwifi {
     */
     //% blockId=wifi_changename block="Wifi ChangeName %name"
     //% weight=96
-    //% blockGap=50
     export function wifi_changename(name: string): void {
-        let cmd: string = 'WF 9 1 9 '+name+'\n'
+        let cmd: string = 'WF 9 1 9 ' + name + '\n'
         serial.writeString(cmd)
         basic.pause(500)
     }
+
+    /**
+     * On wifi status changed
+     * @param handler Mqtt topic data callback;
+    */
+    //% blockId=on_wifi_status block="on Wifi changed"
+    //% weight=94
+    //% blockGap=50
+    export function on_wifi_status(handler: (status: number) => void): void {
+        wifiStatusChanged = handler;
+    }
+
 
     /**
      * Set MQTT set host
@@ -104,7 +154,7 @@ namespace kittenwifi {
     //% blockId=mqtt_sethost block="MQTT Set Host|%host clientID|%clientid"
     //% weight=90
     export function mqtt_sethost(host: string, clientid: string): void {
-        let cmd: string = 'WF 15 2 15 '+host+' '+clientid+'\n'
+        let cmd: string = 'WF 15 2 15 ' + host + ' ' + clientid + '\n'
         serial.writeString(cmd)
         basic.pause(500)
     }
@@ -117,21 +167,38 @@ namespace kittenwifi {
     //% blockId=mqtt_publish block="MQTT publish|%topic|Data %data"
     //% weight=86
     export function mqtt_publish(topic: string, data: string): void {
-        let cmd: string = 'WF 11 2 11 '+topic+' '+data+'\n'
+        let cmd: string = 'WF 11 2 11 ' + topic + ' ' + data + '\n'
         serial.writeString(cmd)
         basic.pause(500)
     }
 
     /**
-     * Set MQTT subscribe topic
+     * Set MQTT subscribe
+     * @param topic Mqtt topic; eg: /topic
+    */
+    //% blockId=mqtt_subscribe block="MQTT Subscribe %topic"
+    //% weight=84
+    export function mqtt_subscribe(topic: string): void {
+        serial.writeString("WF 12 2 0 " + topic + ' 0\n')
+        basic.pause(500)
+    }
+
+    /**
+     * On MQTT subscribe data callback install
      * @param topic Mqtt topic; eg: /topic
      * @param handler Mqtt topic data callback;
     */
-    //% blockId=mqtt_subscribe block="MQTT subscribe|%topic"
-    //% weight=84
+    //% blockId=on_mqtt_data block="on Mqtt topic|%topic"
+    //% weight=82
     //% blockGap=50
-    export function mqtt_subscribe(topic: string, handler: (data: string) => void): void {
-        
+    export function on_mqtt_data(topic: string, handler: (data: string) => void): void {
+        // todo: push may null global definition
+        // mqttCb.push(handler)
+        // mqttCbKey.push(topic)
+        if (mqttCbCnt>=10) return;
+        mqttCb[mqttCbCnt] = handler;
+        mqttCbKey[mqttCbCnt] = topic;
+        mqttCbCnt++;
     }
 
     /**
