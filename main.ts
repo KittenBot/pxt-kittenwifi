@@ -36,6 +36,9 @@ namespace kittenwifi {
     type EvtAct = () => void;
     type EvtNum = (data: number) => void;
 
+    //% shim=kittenwifi::setSerialBuffer
+    function setSerialBuffer(size: number): void { }
+
     let v: string;
     // no map support for ts over microbit
     let mqttCbCnt = 0;
@@ -123,6 +126,7 @@ namespace kittenwifi {
             BaudRate.BaudRate115200
         )
         basic.pause(500)
+        setSerialBuffer(64);
         serial.readString()
         serial.writeString('\n\n')
         basic.pause(500)
