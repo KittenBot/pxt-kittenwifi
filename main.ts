@@ -36,16 +36,14 @@ namespace kittenwifi {
     type EvtAct = () => void;
     type EvtNum = (data: number) => void;
 
-    //% shim=kittenwifi::setSerialBuffer
-    function setSerialBuffer(size: number): void { }
 
     let v: string;
     // no map support for ts over microbit
     let mqttCbCnt = 0;
     let mqttCb: EvtStr[] = [null, null, null, null, null, null, null, null];
     let mqttCbKey: string[] = ['', '', '', '', '', '', '', ''];
-    let wifiConn: EvtAct;
-    let wifiDisconn: EvtAct;
+    let wifiConn: EvtAct = null;
+    let wifiDisconn: EvtAct = null;
 
     function seekNext(): string {
         for (let i = 0; i < v.length; i++) {
@@ -69,10 +67,10 @@ namespace kittenwifi {
         if (Callback.WIFI_STATUS_CHANGED == cb) {
             let stat = parseInt(seekNext())
             if (stat == 5) {
-                wifiConn()
                 serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
+                if (wifiConn) wifiConn()
             } else {
-                wifiDisconn()
+                if (wifiDisconn) wifiDisconn()
             }
         } else if (Callback.MQTT_DATA == cb) {
             let topic: string = seekNext()
@@ -96,7 +94,7 @@ namespace kittenwifi {
     serial.onDataReceived('\n', function () {
         v = serial.readString()
         let argv: string[] = []
-        basic.showString("[" + v + "]")
+        // basic.showString("[" + v + "]")
         if (v.charAt(0) == 'W' && v.charAt(1) == 'F') {
             v = v.substr(3, v.length - 3) + ' '
             let cmd = parseInt(seekNext())
@@ -110,6 +108,11 @@ namespace kittenwifi {
 
         }
     })
+
+    //% shim=kittenwifi::setSerialBuffer
+    function setSerialBuffer(size: number): void {
+        return null;
+    }
 
     /**
      * Wifi connection io init
@@ -129,11 +132,11 @@ namespace kittenwifi {
         setSerialBuffer(64);
         serial.readString()
         serial.writeString('\n\n')
-        basic.pause(500)
+        basic.pause(1000)
         serial.writeString("WF 1 0 1\n") // sync command to add wifi status callback
-        basic.pause(500)
+        basic.pause(1000)
         serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
-        basic.pause(500)
+        basic.pause(1000)
     }
 
     //% blockId=wifi_join block="Wifi Join Aceess Point|%ap Password|%pass"
@@ -300,6 +303,10 @@ namespace kittenwifi {
     export function rest_get(api: string, handler: (data: string) => void): void {
 
     }
-
-
 }
+
+/*
+namespace pxsim.kittenwifi{
+    setSerialBuffer: {}
+}
+*/
