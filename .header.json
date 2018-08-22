@@ -1,6 +1,6 @@
 {
     "target": "microbit",
-    "targetVersion": "1.1.40",
+    "targetVersion": "1.1.43",
     "name": "kittenwifi",
     "meta": {},
     "editor": "tsprj",
@@ -8,8 +8,8 @@
     "pubCurrent": false,
     "_rev": null,
     "id": "e5af4176-1bb2-49cd-daa2-28b0670eefec",
-    "recentUse": 1534742915,
-    "modificationTime": 1534742915,
+    "recentUse": 1534911585,
+    "modificationTime": 1534909559,
     "blobId": null,
     "blobVersion": null,
     "blobCurrent": false,
