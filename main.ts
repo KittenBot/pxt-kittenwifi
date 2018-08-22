@@ -190,7 +190,7 @@ namespace kittenwifi {
     export function mqtt_sethost(host: string, clientid: string): void {
         let cmd: string = 'WF 15 2 15 ' + host + ' ' + clientid + '\n'
         serial.writeString(cmd)
-        basic.pause(500)
+        basic.pause(1000)
         // reset mqtt handler
         serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
         basic.pause(500)
