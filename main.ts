@@ -18,6 +18,7 @@ namespace kittenwifi {
     const CMD_MQTT_SETHOST = 15;
     const CMD_REST_SETUP = 20;
     const CMD_REST_REQ = 21;
+    const CMD_REST_RET = 23;
     const CMD_SOCK_SETUP = 40;
     const CMD_SOCK_SEND = 41;
     const CMD_SOCK_DATA = 42;
@@ -39,11 +40,18 @@ namespace kittenwifi {
 
     let v: string;
     // no map support for ts over microbit
+    let ipAddr: string = '';
+
     let mqttCbCnt = 0;
     let mqttCb: EvtStr[] = [null, null, null, null, null, null, null, null];
     let mqttCbKey: string[] = ['', '', '', '', '', '', '', ''];
+
     let wifiConn: EvtAct = null;
     let wifiDisconn: EvtAct = null;
+
+    // no multi udp or restful instance support for microbit
+    let udpRxEvt: EvtStr = null;
+    let restRxEvt: EvtStr = null;
 
     function seekNext(): string {
         for (let i = 0; i < v.length; i++) {
@@ -68,8 +76,10 @@ namespace kittenwifi {
             let stat = parseInt(seekNext())
             if (stat == 5) {
                 serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
+                ipAddr = seekNext()
                 if (wifiConn) wifiConn()
             } else {
+                ipAddr = ''
                 if (wifiDisconn) wifiDisconn()
             }
         } else if (Callback.MQTT_DATA == cb) {
@@ -104,6 +114,11 @@ namespace kittenwifi {
             //  todo: is there an async way to handle response value?
             if (cmd == CMD_RESP_CB) {
                 parseCallback(cb)
+            } else if (cmd == CMD_SOCK_DATA) {
+                if (udpRxEvt) udpRxEvt(v)
+            } else if (cmd == CMD_REST_RET) {
+                let code = parseInt(seekNext())
+                if (restRxEvt) restRxEvt(v)
             }
 
         }
@@ -238,6 +253,7 @@ namespace kittenwifi {
         mqttCbCnt++;
     }
 
+
     /**
      * UDP communication
      * @param addr Remote ip; eg: 192.168.0.100
@@ -246,67 +262,60 @@ namespace kittenwifi {
     //% blockId=udp_comm block="start UDP Communication |%port"
     //% weight=80
     export function udp_comm(addr: string, port: number): void {
-        serial.writeString("WF 40 3 6 " + addr + ' ' + port + ' 3\n')
+        serial.writeString("WF 40 3 40 " + addr + ' ' + port + ' 3\n')
         basic.pause(500)
     }
 
     /**
      * UDP Send
-     * @param addr Remote ip; eg: 192.168.0.100
-     * @param port UDP port; eg: 1234
      * @param data UDP data; eg: hello
     */
     //% blockId=udp_send block="UDP Send %data"
     //% weight=78
-    export function udp_send(addr: string, data: string): void {
-
+    export function udp_send(data: string): void {
+        serial.writeString("WF 41 1 0 " + data + '\n')
     }
 
     /**
      * on UDP data
      * @param addr Remote ip; eg: 192.168.0.100
     */
-    //% blockId=udp_ondata block="on UDP %addr data"
+    //% blockId=udp_ondata block="on UDP data"
     //% weight=76
     //% blockGap=50
-    export function udp_ondata(addr: string, handler: (data: string) => void): void {
-
+    export function udp_ondata(handler: (udpData: string) => void): void {
+        udpRxEvt = handler;
     }
 
     /**
      * Set Restful host
      * @param host Host domain name; eg: kittenbot.cn
+     * @param port Host port; eg: 80
     */
-    //% blockId=rest_host block="Rest Host %host"
+    //% blockId=rest_host block="Rest Host %host port|%port"
     //% weight=70
-    export function rest_host(host: string): void {
-
+    export function rest_host(host: string, port: number, secure: boolean): void {
+        // todo: support https connection?
+        serial.writeString("WF 20 3 20 " + host + " " + port + " 0\n")
     }
 
     /**
-     * Restful POST
-     * @param api API link; eg: /api/test
-     * @param content Content to send; eg: a=100
+     * Restful request
+     * @param method Method in request; eg: GET, POST, PUT
+     * @param api API link; eg: /api/test?apple=1
     */
-    //% blockId=rest_post block="Rest Post %api content|%content"
+    //% blockId=rest_request block="Rest REQ %method api|%api"
     //% weight=68
-    export function rest_post(api: string, content: string): void {
-
+    export function rest_request(method: string, api: string): void {
+        serial.writeString("WF 21 2 0 " + method + " " + api + "\n")
     }
 
     /**
-     * Restful Get
-     * @param api API link; eg: /api/something
+     * Restful request return
     */
-    //% blockId=rest_get block="Rest Get %api"
+    //% blockId=rest_ret block="Rest Return"
     //% weight=66
-    export function rest_get(api: string, handler: (data: string) => void): void {
-
+    export function rest_ret(handler: (restData: string) => void): void {
+        restRxEvt = handler;
     }
 }
-
-/*
-namespace pxsim.kittenwifi{
-    setSerialBuffer: {}
-}
-*/
