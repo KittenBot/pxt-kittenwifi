@@ -190,10 +190,17 @@ namespace kittenwifi {
     */
     //% blockId=on_wifi_disconnected block="on Wifi Disconnected"
     //% weight=92
-    //% blockGap=50
     export function on_wifi_disconnected(handler: () => void): void {
         wifiDisconn = handler;
     }
+
+    //% blockId=wifi_addr block="Wifi IP Address"
+    //% weight=91
+    //% blockGap=50
+    export function wifi_addr(): string {
+        return ipAddr;
+    }
+
 
     /**
      * Set MQTT set host

@@ -1,0 +1,18 @@
+{
+    "kittenwifi.wifi_init|block": "Wifi 初始化|Tx pin %tx|Rx pin %rx",
+    "kittenwifi.wifi_join|block": "Wifi 加入路由器|%ap 密码|%pass",
+    "kittenwifi.wifi_changename|block": "Wifi模块重命名 %name",
+    "kittenwifi.on_wifi_connected|block": "连接成功",
+    "kittenwifi.on_wifi_disconnected|block": "连接断开",
+    "kittenwifi.wifi_addr|block": "Wifi IP地址",
+    "kittenwifi.mqtt_sethost|block": "MQTT 设置服务器|%host 节点ID|%clientid",
+    "kittenwifi.mqtt_publish|block": "MQTT 广播 话题|%topic|内容 %data",
+    "kittenwifi.mqtt_subscribe|block": "MQTT 订阅话题 %topic",
+    "kittenwifi.on_mqtt_data|block": "MQtt 收到 话题|%topic",
+    "kittenwifi.udp_comm|block": "开始UDP通信 端口|%port",
+    "kittenwifi.udp_send|block": "UDP 发送 %data",
+    "kittenwifi.udp_ondata|block": "UDP 收到",
+    "kittenwifi.rest_host|block": "Rest 服务器 %host 端口|%port",
+    "kittenwifi.rest_request|block": "Rest 请求 方法|%method api|%api",
+    "kittenwifi.rest_ret|block": "Rest 返回"
+}
