@@ -226,7 +226,7 @@ namespace kittenwifi {
     //% blockId=mqtt_publish block="MQTT publish|%topic|Data %data"
     //% weight=86
     export function mqtt_publish(topic: string, data: string): void {
-        let cmd: string = 'WF 11 5 11 0 0 ' + topic + ' ' + data + '\n'
+        let cmd: string = 'WF 11 4 11 0 0 ' + topic + ' ' + data + '\n'
         serial.writeString(cmd)
         basic.pause(200) // limit user pub rate
     }
@@ -266,7 +266,7 @@ namespace kittenwifi {
      * @param addr Remote ip; eg: 192.168.0.100
      * @param port UDP port; eg: 1234
     */
-    //% blockId=udp_comm block="start UDP Communication |%port"
+    //% blockId=udp_comm block="start UDP Communication ip|%addr port|%port"
     //% weight=80
     export function udp_comm(addr: string, port: number): void {
         serial.writeString("WF 40 3 40 " + addr + ' ' + port + ' 3\n')
@@ -301,7 +301,7 @@ namespace kittenwifi {
     */
     //% blockId=rest_host block="Rest Host %host port|%port"
     //% weight=70
-    export function rest_host(host: string, port: number, secure: boolean): void {
+    export function rest_host(host: string, port: number): void {
         // todo: support https connection?
         serial.writeString("WF 20 3 20 " + host + " " + port + " 0\n")
     }

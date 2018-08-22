@@ -9,7 +9,7 @@
     "kittenwifi.mqtt_publish|block": "MQTT 广播 话题|%topic|内容 %data",
     "kittenwifi.mqtt_subscribe|block": "MQTT 订阅话题 %topic",
     "kittenwifi.on_mqtt_data|block": "MQtt 收到 话题|%topic",
-    "kittenwifi.udp_comm|block": "开始UDP通信 端口|%port",
+    "kittenwifi.udp_comm|block": "开始UDP通信 ip|%addr 端口|%port",
     "kittenwifi.udp_send|block": "UDP 发送 %data",
     "kittenwifi.udp_ondata|block": "UDP 收到",
     "kittenwifi.rest_host|block": "Rest 服务器 %host 端口|%port",
