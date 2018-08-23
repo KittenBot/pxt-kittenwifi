@@ -53,17 +53,17 @@ namespace kittenwifi {
     let udpRxEvt: EvtStr = null;
     let restRxEvt: EvtStr = null;
 
-    function seekNext(): string {
+    function seekNext(space: boolean = true): string {
         for (let i = 0; i < v.length; i++) {
-            if (v.charAt(i) == ' ' || v.charAt(i) == '\r' || v.charAt(i) == '\n') {
+            if ((space && v.charAt(i) == ' ') || v.charAt(i) == '\r' || v.charAt(i) == '\n') {
                 let ret = v.substr(0, i)
                 v = v.substr(i + 1, v.length - i)
                 return ret;
             }
         }
-
         return '';
     }
+
 
     /* // no tostring for integer
     function sendCmd(cmdType: number, argc: number, cb: number, extra: string){
@@ -84,7 +84,7 @@ namespace kittenwifi {
             }
         } else if (Callback.MQTT_DATA == cb) {
             let topic: string = seekNext()
-            let data: string = v; // all rest text as data
+            let data = seekNext(false);
             for (let i = 0; i < 5; i++) {
                 let cmp = mqttCbKey[i].compare(topic)
                 if (cmp == 0) {
@@ -104,7 +104,7 @@ namespace kittenwifi {
     serial.onDataReceived('\n', function () {
         v = serial.readString()
         let argv: string[] = []
-        // basic.showString("[" + v + "]")
+
         if (v.charAt(0) == 'W' && v.charAt(1) == 'F') {
             v = v.substr(3, v.length - 3) + ' '
             let cmd = parseInt(seekNext())
@@ -115,10 +115,12 @@ namespace kittenwifi {
             if (cmd == CMD_RESP_CB) {
                 parseCallback(cb)
             } else if (cmd == CMD_SOCK_DATA) {
-                if (udpRxEvt) udpRxEvt(v)
+                let data = seekNext(false);
+                if (udpRxEvt) udpRxEvt(data)
             } else if (cmd == CMD_REST_RET) {
                 let code = parseInt(seekNext())
-                if (restRxEvt) restRxEvt(v)
+                let data = seekNext(false);
+                if (restRxEvt) restRxEvt(data)
             }
 
         }
