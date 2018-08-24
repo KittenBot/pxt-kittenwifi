@@ -52,6 +52,13 @@ namespace kittenwifi {
     // no multi udp or restful instance support for microbit
     let udpRxEvt: EvtStr = null;
     let restRxEvt: EvtStr = null;
+    
+    function trim(t: string): string{
+        if (t.charAt(t.length-1) == ' ') {
+            t = t.substr(0, t.length - 1)
+        }
+        return t;
+    }
 
     function seekNext(space: boolean = true): string {
         for (let i = 0; i < v.length; i++) {
@@ -84,7 +91,7 @@ namespace kittenwifi {
             }
         } else if (Callback.MQTT_DATA == cb) {
             let topic: string = seekNext()
-            let data = seekNext(false);
+            let data = trim(seekNext(false));
             for (let i = 0; i < 5; i++) {
                 let cmp = mqttCbKey[i].compare(topic)
                 if (cmp == 0) {
@@ -115,11 +122,11 @@ namespace kittenwifi {
             if (cmd == CMD_RESP_CB) {
                 parseCallback(cb)
             } else if (cmd == CMD_SOCK_DATA) {
-                let data = seekNext(false);
+                let data = trim(seekNext(false));
                 if (udpRxEvt) udpRxEvt(data)
             } else if (cmd == CMD_REST_RET) {
                 let code = parseInt(seekNext())
-                let data = seekNext(false);
+                let data = trim(seekNext(false));
                 if (restRxEvt) restRxEvt(data)
             }
 
