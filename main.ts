@@ -33,6 +33,27 @@ namespace kittenwifi {
         UDP_SETUP = 6,
         UDP_DATA = 7
     }
+
+    const weatherApi = ['tmp', 'fl', 'cond_txt', 'wind_spd', 'hum', 'pcpn', 'pres', 'vis']
+    export enum WeatherType {
+        //% block=temperature
+        tmp = 0,
+        //% block=fell_temp
+        fl = 1,
+        //% block=weather
+        cond_txt = 2,
+        //% block=wind_speed
+        wind_spd = 3,
+        //% block=humidity
+        hum = 4,
+        //% block=rain
+        pcpn = 5,
+        //% block=pressure
+        pres = 6,
+        //% block=visibility
+        vis = 7
+    }
+
     type EvtStr = (data: string) => void;
     type EvtAct = () => void;
     type EvtNum = (data: number) => void;
@@ -340,6 +361,12 @@ namespace kittenwifi {
     //% weight=68
     export function rest_request(method: string, api: string): void {
         serial.writeString("WF 21 2 0 " + method + " " + api + "\n")
+    }
+
+    //% blockId=rest_weather block="Rest Weather %t"
+    //% weight=67
+    export function rest_weather(t: WeatherType): void {
+        serial.writeString("WF 21 2 0 GET /api/iot/weather?location=ip&type=" + weatherApi[t] + "\n")
     }
 
     /**

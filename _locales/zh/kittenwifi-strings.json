@@ -15,5 +15,13 @@
     "kittenwifi.udp_ondata|block": "UDP 收到",
     "kittenwifi.rest_host|block": "Rest 服务器 %host 端口|%port",
     "kittenwifi.rest_request|block": "Rest 请求 方法|%method api|%api",
-    "kittenwifi.rest_ret|block": "Rest 返回"
+    "kittenwifi.rest_ret|block": "Rest 返回",
+    "kittenwifi.WeatherType.tmp|block": "温度",
+    "kittenwifi.WeatherType.fl|block": "体感温度",
+    "kittenwifi.WeatherType.cond_txt|block": "天气",
+    "kittenwifi.WeatherType.wind_spd|block": "风速",
+    "kittenwifi.WeatherType.hum|block": "湿度",
+    "kittenwifi.WeatherType.pcpn|block": "降雨",
+    "kittenwifi.WeatherType.pres|block": "气压",
+    "kittenwifi.WeatherType.vis|block": "能见度"
 }
