@@ -6,6 +6,7 @@
     "kittenwifi.on_wifi_disconnected|block": "连接断开",
     "kittenwifi.wifi_addr|block": "Wifi IP地址",
     "kittenwifi.mqtt_sethost|block": "MQTT 设置服务器|%host 节点ID|%clientid",
+    "kittenwifi.mqtt_sethost_auth|block": "MQTT 设置服务器|%host 节点ID|%clientid 用户名|%username 秘钥|%pass",
     "kittenwifi.mqtt_publish|block": "MQTT 广播 话题|%topic|内容 %data",
     "kittenwifi.mqtt_subscribe|block": "MQTT 订阅话题 %topic",
     "kittenwifi.on_mqtt_data|block": "MQtt 收到 话题|%topic",

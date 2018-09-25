@@ -52,9 +52,9 @@ namespace kittenwifi {
     // no multi udp or restful instance support for microbit
     let udpRxEvt: EvtStr = null;
     let restRxEvt: EvtStr = null;
-    
-    function trim(t: string): string{
-        if (t.charAt(t.length-1) == ' ') {
+
+    function trim(t: string): string {
+        if (t.charAt(t.length - 1) == ' ') {
             t = t.substr(0, t.length - 1)
         }
         return t;
@@ -220,6 +220,22 @@ namespace kittenwifi {
     //% weight=90
     export function mqtt_sethost(host: string, clientid: string): void {
         let cmd: string = 'WF 15 2 15 ' + host + ' ' + clientid + '\n'
+        serial.writeString(cmd)
+        basic.pause(1000)
+        // reset mqtt handler
+        serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
+        basic.pause(500)
+    }
+
+    /**
+     * Set MQTT set host auth
+     * @param host Mqtt server ip or address; eg: kittenbot.cn
+     * @param clientid Mqtt client id; eg: node01
+    */
+    //% blockId=mqtt_sethost_auth block="MQTT Set Host|%host clientID|%clientid user|%username pass|%pass"
+    //% weight=90
+    export function mqtt_sethost_auth(host: string, clientid: string, username: string, pass: string): void {
+        let cmd: string = 'WF 15 4 15 ' + host + ' ' + clientid + ' ' + username + ' ' + pass + '\n'
         serial.writeString(cmd)
         basic.pause(1000)
         // reset mqtt handler
