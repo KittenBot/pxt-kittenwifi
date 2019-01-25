@@ -1,6 +1,6 @@
 {
     "name": "kittenwifi",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "Extension for Kittenbot Wifi module",
     "license": "MIT",
     "dependencies": {
