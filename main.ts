@@ -34,6 +34,20 @@ namespace kittenwifi {
         UDP_DATA = 7
     }
 
+    const PortSerial = [
+        [SerialPin.P8, SerialPin.P0],
+        [SerialPin.P12, SerialPin.P1],
+        [SerialPin.P13, SerialPin.P2],
+        [SerialPin.P15, SerialPin.P14]
+    ]
+
+    export enum SerialPorts {
+        PORT1 = 0,
+        PORT2 = 1,
+        PORT3 = 2,
+        PORT4 = 3
+    }
+
     const weatherApi = ['tmp', 'fl', 'cond_txt', 'wind_spd', 'hum', 'pcpn', 'pres', 'vis']
     export enum WeatherType {
         //% block=temperature
@@ -166,7 +180,6 @@ namespace kittenwifi {
     */
     //% blockId=wifi_init block="Wifi init|Tx pin %tx|Rx pin %rx"
     //% weight=100
-    //% blockGap=50
     export function wifi_init(tx: SerialPin, rx: SerialPin): void {
         serial.redirect(
             tx,
@@ -182,6 +195,13 @@ namespace kittenwifi {
         basic.pause(1000)
         serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
         basic.pause(1000)
+    }
+
+    //% blockId=wifi_init_pw block="Wifi init powerbrick|Port %port"
+    //% weight=100
+    //% blockGap=50
+    export function wifi_init_pw(port: SerialPorts): void {
+        wifi_init(PortSerial[port][0], PortSerial[port][1]) // tx, rx
     }
 
     //% blockId=wifi_join block="Wifi Join Aceess Point|%ap Password|%pass"
