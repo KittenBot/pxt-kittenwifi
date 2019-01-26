@@ -201,7 +201,7 @@ namespace kittenwifi {
     //% weight=100
     //% blockGap=50
     export function wifi_init_pw(port: SerialPorts): void {
-        wifi_init(PortSerial[port][0], PortSerial[port][1]) // tx, rx
+        wifi_init(PortSerial[port][1], PortSerial[port][0]) // tx, rx
     }
 
     //% blockId=wifi_join block="Wifi Join Aceess Point|%ap Password|%pass"
