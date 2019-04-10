@@ -71,6 +71,7 @@ namespace kittenwifi {
     type EvtStr = (data: string) => void;
     type EvtAct = () => void;
     type EvtNum = (data: number) => void;
+    type EvtDict = (topic: string, data: string) => void;
 
 
     let v: string;
@@ -80,6 +81,7 @@ namespace kittenwifi {
     let mqttCbCnt = 0;
     let mqttCb: EvtStr[] = [null, null, null, null, null, null, null, null];
     let mqttCbKey: string[] = ['', '', '', '', '', '', '', ''];
+    let mqttCbTopicData: EvtDict = null;
 
     let wifiConn: EvtAct = null;
     let wifiDisconn: EvtAct = null;
@@ -133,6 +135,9 @@ namespace kittenwifi {
                     mqttCb[i](data)
                     break;
                 }
+            }
+            if (mqttCbTopicData){
+                mqttCbTopicData(topic, data)
             }
         } else if (Callback.MQTT_CONN == cb) {
             // resubscribe?
@@ -273,6 +278,7 @@ namespace kittenwifi {
      * @param host Mqtt server ip or address; eg: kittenbot.cn
      * @param clientid Mqtt client id; eg: node01
     */
+    //% advanced=true
     //% blockId=mqtt_sethost_auth block="MQTT Set Host|%host clientID|%clientid user|%username pass|%pass"
     //% weight=90
     export function mqtt_sethost_auth(host: string, clientid: string, username: string, pass: string): void {
@@ -315,7 +321,6 @@ namespace kittenwifi {
     */
     //% blockId=on_mqtt_data block="on Mqtt topic|%topic"
     //% weight=82
-    //% blockGap=50
     export function on_mqtt_data(topic: string, handler: (data: string) => void): void {
         // todo: push may null global definition
         // mqttCb.push(handler)
@@ -324,6 +329,20 @@ namespace kittenwifi {
         mqttCb[mqttCbCnt] = handler;
         mqttCbKey[mqttCbCnt] = topic;
         mqttCbCnt++;
+    }
+    
+    /**
+     * On MQTT got any topic and data
+     * @param handler Mqtt topic data callback;
+    */
+    //% blockId=on_mqtt_topic_data block="on Mqtt "
+    //% weight=81
+    //% blockGap=50
+    export function on_mqtt_topic_data(handler: (topic: string, data: string) => void): void {
+        // todo: push may null global definition
+        // mqttCb.push(handler)
+        // mqttCbKey.push(topic)
+        mqttCbTopicData = handler;
     }
 
 
@@ -367,6 +386,7 @@ namespace kittenwifi {
     */
     //% blockId=rest_host block="Rest Host %host port|%port"
     //% weight=70
+    //% advanced=true
     export function rest_host(host: string, port: number): void {
         // todo: support https connection?
         serial.writeString("WF 20 3 20 " + host + " " + port + " 0\n")
@@ -379,12 +399,14 @@ namespace kittenwifi {
     */
     //% blockId=rest_request block="Rest REQ %method api|%api"
     //% weight=68
+    //% advanced=true
     export function rest_request(method: string, api: string): void {
         serial.writeString("WF 21 2 0 " + method + " " + api + "\n")
     }
 
     //% blockId=rest_weather block="Rest Weather %t"
     //% weight=67
+    //% advanced=true
     export function rest_weather(t: WeatherType): void {
         serial.writeString("WF 21 2 0 GET /api/iot/weather?location=ip&type=" + weatherApi[t] + "\n")
     }
@@ -394,6 +416,7 @@ namespace kittenwifi {
     */
     //% blockId=rest_ret block="Rest Return"
     //% weight=66
+    //% advanced=true
     export function rest_ret(handler: (restData: string) => void): void {
         restRxEvt = handler;
     }
