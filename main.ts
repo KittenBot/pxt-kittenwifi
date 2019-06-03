@@ -136,7 +136,7 @@ namespace kittenwifi {
                     break;
                 }
             }
-            if (mqttCbTopicData){
+            if (mqttCbTopicData) {
                 mqttCbTopicData(topic, data)
             }
         } else if (Callback.MQTT_CONN == cb) {
@@ -274,6 +274,24 @@ namespace kittenwifi {
     }
 
     /**
+     * Set MQTT set host with port
+     * @param host Mqtt server ip or address; eg: kittenbot.cn
+     * @param clientid Mqtt client id; eg: node01
+     * @param port host port; eg: 1883
+    */
+    //% blockId=mqtt_sethost_port block="MQTT Set Host|%host port|%port clientID|%clientid"
+    //% weight=90
+    //% advanced=true
+    export function mqtt_sethost_port(host: string, port: number, clientid: string): void {
+        let cmd: string = 'WF 15 3 15 ' + host + ' ' + clientid + ' ' + port + '\n'
+        serial.writeString(cmd)
+        basic.pause(1000)
+        // reset mqtt handler
+        serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
+        basic.pause(500)
+    }
+
+    /**
      * Set MQTT set host auth
      * @param host Mqtt server ip or address; eg: kittenbot.cn
      * @param clientid Mqtt client id; eg: node01
@@ -283,6 +301,24 @@ namespace kittenwifi {
     //% weight=90
     export function mqtt_sethost_auth(host: string, clientid: string, username: string, pass: string): void {
         let cmd: string = 'WF 15 4 15 ' + host + ' ' + clientid + ' ' + username + ' ' + pass + '\n'
+        serial.writeString(cmd)
+        basic.pause(1000)
+        // reset mqtt handler
+        serial.writeString("WF 10 4 0 2 3 4 5\n") // mqtt callback install
+        basic.pause(500)
+    }
+
+    /**
+     * Set MQTT set host auth with port
+     * @param host Mqtt server ip or address; eg: kittenbot.cn
+     * @param clientid Mqtt client id; eg: node01
+     * @param port host port; eg: 1883
+    */
+    //% advanced=true
+    //% blockId=mqtt_sethost_auth_port block="MQTT Set Host|%host port|%port clientID|%clientid user|%username pass|%pass"
+    //% weight=90
+    export function mqtt_sethost_auth_port(host: string, port: number, clientid: string, username: string, pass: string): void {
+        let cmd: string = 'WF 15 5 15 ' + host + ' ' + clientid + ' ' + port + ' ' + username + ' ' + pass + '\n'
         serial.writeString(cmd)
         basic.pause(1000)
         // reset mqtt handler
@@ -330,7 +366,7 @@ namespace kittenwifi {
         mqttCbKey[mqttCbCnt] = topic;
         mqttCbCnt++;
     }
-    
+
     /**
      * On MQTT got any topic and data
      * @param handler Mqtt topic data callback;
