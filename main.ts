@@ -255,7 +255,7 @@ namespace kittenwifi {
      * @param clientid Mqtt client id; eg: node01
      * @param port host port; eg: 1883
     */
-    //% blockId=mqtt_sethost_port block="MQTT Set Host|%host port|%port clientID|%clientid"
+    //% blockId=mqtt_sethost_port block="MQTT Set Host%host port%port clientID%clientid"
     //% weight=90
     //% advanced=true
     export function mqtt_sethost_port(host: string, port: number, clientid: string): void {
@@ -306,11 +306,15 @@ namespace kittenwifi {
      * Set MQTT publish something to topic
      * @param topic Mqtt topic; eg: /hello
      * @param data Mqtt topic data; eg: Helloworld
+     * @param qos Qos; eg: 1
+     * @param retain Retain; eg: 0
     */
-    //% blockId=mqtt_publish block="MQTT publish|%topic|Data %data||Qos %qos retain %retain"
+    //% blockId=mqtt_publish block="MQTT publish %topic|Data %data||Qos %qos Retain %retain"
     //% weight=86
-    export function mqtt_publish(topic: string, data: string, qos?: number, retain?: boolean): void {
-        let cmd: string = 'WF 11 4 11 1 1 ' + topic + ' ' + data + '\n'
+    export function mqtt_publish(topic: string, data: string, qos?: number, retain?: number): void {
+        qos = qos ? 1:0;
+        retain = retain ? 1 : 0;
+        let cmd: string = `WF 11 4 11 ${qos} ${retain} ` + topic + ' ' + data + '\n'
         serial.writeString(cmd)
         basic.pause(200) // limit user pub rate
     }
@@ -322,7 +326,7 @@ namespace kittenwifi {
     //% blockId=mqtt_subscribe block="MQTT Subscribe %topic"
     //% weight=84
     export function mqtt_subscribe(topic: string): void {
-        serial.writeString("WF 12 2 0 " + topic + ' 0\n')
+        serial.writeString("WF 12 2 1 " + topic + ' 0\n')
         basic.pause(500)
     }
 
@@ -396,12 +400,13 @@ namespace kittenwifi {
      * @param host Host domain name; eg: kittenbot.cn
      * @param port Host port; eg: 80
     */
-    //% blockId=rest_host block="Rest Host %host port|%port"
+    //% blockId=rest_host block="Rest Host %host port %port||secure %secure"
     //% weight=70
     //% advanced=true
-    export function rest_host(host: string, port: number): void {
+    export function rest_host(host: string, port: number, secure?: number): void {
         // todo: support https connection?
-        serial.writeString("WF 20 3 20 " + host + " " + port + " 0\n")
+        secure = secure ? 1 : 0;
+        serial.writeString("WF 20 3 20 " + host + " " + port + ` ${secure}\n`)
     }
 
     /**
