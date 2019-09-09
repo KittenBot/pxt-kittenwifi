@@ -48,26 +48,6 @@ namespace kittenwifi {
         PORT4 = 3
     }
 
-    const weatherApi = ['tmp', 'fl', 'cond_txt', 'wind_spd', 'hum', 'pcpn', 'pres', 'vis']
-    export enum WeatherType {
-        //% block=temperature
-        tmp = 0,
-        //% block=fell_temp
-        fl = 1,
-        //% block=weather
-        cond_txt = 2,
-        //% block=wind_speed
-        wind_spd = 3,
-        //% block=humidity
-        hum = 4,
-        //% block=rain
-        pcpn = 5,
-        //% block=pressure
-        pres = 6,
-        //% block=visibility
-        vis = 7
-    }
-
     type EvtStr = (data: string) => void;
     type EvtAct = () => void;
     type EvtNum = (data: number) => void;
@@ -173,11 +153,6 @@ namespace kittenwifi {
         }
     })
 
-    //% shim=kittenwifi::setSerialBuffer
-    function setSerialBuffer(size: number): void {
-        return null;
-    }
-
     /**
      * Wifi connection io init
      * @param tx Tx pin; eg: SerialPin.P1
@@ -192,7 +167,8 @@ namespace kittenwifi {
             BaudRate.BaudRate115200
         )
         basic.pause(500)
-        setSerialBuffer(64);
+        serial.setRxBufferSize(64)
+        serial.setTxBufferSize(64)
         serial.readString()
         serial.writeString('\n\n')
         basic.pause(1000)
@@ -262,7 +238,7 @@ namespace kittenwifi {
      * @param host Mqtt server ip or address; eg: kittenbot.cn
      * @param clientid Mqtt client id; eg: node01
     */
-    //% blockId=mqtt_sethost block="MQTT Set Host|%host clientID|%clientid"
+    //% blockId=mqtt_sethost block="MQTT Set Host%host clientID%clientid"
     //% weight=90
     export function mqtt_sethost(host: string, clientid: string): void {
         let cmd: string = 'WF 15 2 15 ' + host + ' ' + clientid + '\n'
@@ -297,7 +273,7 @@ namespace kittenwifi {
      * @param clientid Mqtt client id; eg: node01
     */
     //% advanced=true
-    //% blockId=mqtt_sethost_auth block="MQTT Set Host|%host clientID|%clientid user|%username pass|%pass"
+    //% blockId=mqtt_sethost_auth block="MQTT Set Host %host clientID %clientid|user %username pass %pass"
     //% weight=90
     export function mqtt_sethost_auth(host: string, clientid: string, username: string, pass: string): void {
         let cmd: string = 'WF 15 4 15 ' + host + ' ' + clientid + ' ' + username + ' ' + pass + '\n'
@@ -315,7 +291,7 @@ namespace kittenwifi {
      * @param port host port; eg: 1883
     */
     //% advanced=true
-    //% blockId=mqtt_sethost_auth_port block="MQTT Set Host|%host port|%port clientID|%clientid user|%username pass|%pass"
+    //% blockId=mqtt_sethost_auth_port block="MQTT Set Host %host|port %port|clientID %clientid|user %username|pass %pass"
     //% weight=90
     export function mqtt_sethost_auth_port(host: string, port: number, clientid: string, username: string, pass: string): void {
         let cmd: string = 'WF 15 5 15 ' + host + ' ' + clientid + ' ' + port + ' ' + username + ' ' + pass + '\n'
@@ -331,10 +307,10 @@ namespace kittenwifi {
      * @param topic Mqtt topic; eg: /hello
      * @param data Mqtt topic data; eg: Helloworld
     */
-    //% blockId=mqtt_publish block="MQTT publish|%topic|Data %data"
+    //% blockId=mqtt_publish block="MQTT publish|%topic|Data %data||Qos %qos retain %retain"
     //% weight=86
-    export function mqtt_publish(topic: string, data: string): void {
-        let cmd: string = 'WF 11 4 11 0 0 ' + topic + ' ' + data + '\n'
+    export function mqtt_publish(topic: string, data: string, qos?: number, retain?: boolean): void {
+        let cmd: string = 'WF 11 4 11 1 1 ' + topic + ' ' + data + '\n'
         serial.writeString(cmd)
         basic.pause(200) // limit user pub rate
     }
@@ -440,12 +416,6 @@ namespace kittenwifi {
         serial.writeString("WF 21 2 0 " + method + " " + api + "\n")
     }
 
-    //% blockId=rest_weather block="Rest Weather %t"
-    //% weight=67
-    //% advanced=true
-    export function rest_weather(t: WeatherType): void {
-        serial.writeString("WF 21 2 0 GET /api/iot/weather?location=ip&type=" + weatherApi[t] + "\n")
-    }
 
     /**
      * Restful request return
