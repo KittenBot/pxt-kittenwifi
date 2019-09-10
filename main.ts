@@ -122,7 +122,7 @@ namespace kittenwifi {
         } else if (Callback.MQTT_CONN == cb) {
             // resubscribe?
             for (let i = 0; i < mqttCbCnt; i++) {
-                serial.writeString("WF 12 2 0 " + mqttCbKey[i] + ' 0\n')
+                serial.writeString("WF 12 2 1 " + mqttCbKey[i] + ' 0\n')
                 basic.pause(300)
             }
         }
@@ -322,11 +322,12 @@ namespace kittenwifi {
     /**
      * Set MQTT subscribe
      * @param topic Mqtt topic; eg: /hello
+     * @param qos QOS; eg: 0
     */
     //% blockId=mqtt_subscribe block="MQTT Subscribe %topic"
     //% weight=84
-    export function mqtt_subscribe(topic: string): void {
-        serial.writeString("WF 12 2 1 " + topic + ' 0\n')
+    export function mqtt_subscribe(topic: string, qos: number): void {
+        serial.writeString(`WF 12 2 ${qos} ` + topic + ' 0\n')
         basic.pause(500)
     }
 
