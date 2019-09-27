@@ -33,6 +33,13 @@ namespace kittenwifi {
         UDP_SETUP = 6,
         UDP_DATA = 7
     }
+    
+    export enum NtpTimeType {
+        s1970 = 0,
+        SS = 1,
+        MM = 2,
+        HH = 3,
+    }
 
     const PortSerial = [
         [SerialPin.P8, SerialPin.P0],
@@ -62,6 +69,8 @@ namespace kittenwifi {
     let mqttCb: EvtStr[] = [null, null, null, null, null, null, null, null];
     let mqttCbKey: string[] = ['', '', '', '', '', '', '', ''];
     let mqttCbTopicData: EvtDict = null;
+    
+    let wifiCmd = 0;
 
     let wifiConn: EvtAct = null;
     let wifiDisconn: EvtAct = null;
@@ -311,6 +320,7 @@ namespace kittenwifi {
     */
     //% blockId=mqtt_publish block="MQTT publish %topic|Data %data||Qos %qos Retain %retain"
     //% weight=86
+    //% advanced=true
     export function mqtt_publish(topic: string, data: string, qos?: number, retain?: number): void {
         qos = qos ? 1:0;
         retain = retain ? 1 : 0;
@@ -319,16 +329,29 @@ namespace kittenwifi {
         basic.pause(200) // limit user pub rate
     }
 
+    //% blockId=mqtt_publish_basic block="MQTT publish %topic|Data %data"
+    //% weight=86
+    export function mqtt_publish_basic(topic: string, data: string): void {
+        mqtt_publish(topic, data, 1, 0);
+    }
+
     /**
      * Set MQTT subscribe
      * @param topic Mqtt topic; eg: /hello
      * @param qos QOS; eg: 0
     */
-    //% blockId=mqtt_subscribe block="MQTT Subscribe %topic"
+    //% blockId=mqtt_subscribe block="MQTT Subscribe %topic||Qos %qos"
     //% weight=84
-    export function mqtt_subscribe(topic: string, qos: number): void {
+    //% advanced=true
+    export function mqtt_subscribe(topic: string, qos?: number): void {
         serial.writeString(`WF 12 2 ${qos} ` + topic + ' 0\n')
         basic.pause(500)
+    }
+
+    //% blockId=mqtt_subscribe_basic block="MQTT Subscribe %topic"
+    //% weight=84
+    export function mqtt_subscribe_basic(topic: string): void {
+        mqtt_subscribe(topic, 1);
     }
 
     /**
@@ -360,6 +383,15 @@ namespace kittenwifi {
         // mqttCb.push(handler)
         // mqttCbKey.push(topic)
         mqttCbTopicData = handler;
+    }
+    
+    //% blockId=ntp_get block="Ntp Get %type"
+    //% weight=78
+    //% advanced=true
+    export function ntp_get(type: NtpTimeType): void {
+        serial.writeString("WF 7\n")
+        
+        
     }
 
 

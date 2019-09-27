@@ -1,5 +1,6 @@
 {
     "kittenwifi.wifi_init|block": "Wifi 初始化|Tx pin %tx Rx pin %rx",
+    "kittenwifi.wifi_init_pw|block": "Wifi 初始化|能量模块 端口%port",
     "kittenwifi.wifi_join|block": "Wifi 加入路由器%ap 密码%pass",
     "kittenwifi.wifi_changename|block": "Wifi模块重命名 %name",
     "kittenwifi.on_wifi_connected|block": "连接成功",
@@ -8,7 +9,9 @@
     "kittenwifi.mqtt_sethost|block": "MQTT 设置服务器%host 节点ID%clientid",
     "kittenwifi.mqtt_sethost_auth|block": "MQTT 设置服务器%host 节点ID%clientid 用户名%username 秘钥%pass",
     "kittenwifi.mqtt_publish|block": "MQTT 广播 话题%topic 内容%data||Qos %qos Retain %retain",
+    "kittenwifi.mqtt_publish_basic|block": "MQTT 广播 话题%topic 内容%data",
     "kittenwifi.mqtt_subscribe|block": "MQTT 订阅话题 %topic||Qos %qos",
+    "kittenwifi.mqtt_subscribe_basic|block": "MQTT 订阅话题 %topic",
     "kittenwifi.on_mqtt_data|block": "MQtt 收到 话题%topic",
     "kittenwifi.udp_comm|block": "开始UDP通信 ip%addr 端口%port",
     "kittenwifi.udp_send|block": "UDP 发送 %data",
