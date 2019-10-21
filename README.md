@@ -3,7 +3,7 @@
 Extension for Kittenbot Wifi module
 
 ## NOTICE:
-Make sure you have upgrade your wifi modules's firmware to v2.82 or upper~
+Make sure you have upgrade firmware of your WiFi module to v2.82 or higher.
 ![image](https://user-images.githubusercontent.com/3390845/58791229-669caf80-8624-11e9-81e6-0835a1ce1727.png)
 
 ## Feature
