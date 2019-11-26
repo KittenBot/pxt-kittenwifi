@@ -55,6 +55,12 @@ namespace kittenwifi {
         PORT4 = 3
     }
 
+    export enum HeaderType {
+        Header = 0,
+        ContentType = 1,
+        UserAgent = 2
+    }
+
     type EvtStr = (data: string) => void;
     type EvtAct = () => void;
     type EvtNum = (data: number) => void;
@@ -440,6 +446,14 @@ namespace kittenwifi {
         // todo: support https connection?
         secure = secure ? 1 : 0;
         serial.writeString("WF 20 3 20 " + host + " " + port + ` ${secure}\n`)
+    }
+
+
+    //% blockId=rest_header block="Rest Header Type%hd %header"
+    //% weight=68
+    //% advanced=true
+    export function rest_header(hd:HeaderType, header: string): void {
+        serial.writeString("WF 22 2 0 "+hd+" "+ header + "\n")
     }
 
     /**
