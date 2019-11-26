@@ -83,7 +83,7 @@ namespace kittenwifi {
 
     // no multi udp or restful instance support for microbit
     let udpRxEvt: EvtStr = null;
-    let restRxEvt: EvtStr = null;
+    let restRxEvt: (code:number, data:string) => void = null;
 
     function trim(t: string): string {
         if (t.charAt(t.length - 1) == ' ') {
@@ -146,13 +146,11 @@ namespace kittenwifi {
     serial.onDataReceived('\n', function () {
         v = serial.readString()
         let argv: string[] = []
-
         if (v.charAt(0) == 'W' && v.charAt(1) == 'F') {
             v = v.substr(3, v.length - 3) + ' '
             let cmd = parseInt(seekNext())
             let argc = parseInt(seekNext())
             let cb = parseInt(seekNext())
-
             //  todo: is there an async way to handle response value?
             if (cmd == CMD_RESP_CB) {
                 parseCallback(cb)
@@ -161,8 +159,9 @@ namespace kittenwifi {
                 if (udpRxEvt) udpRxEvt(data)
             } else if (cmd == CMD_REST_RET) {
                 let code = parseInt(seekNext())
-                let data = trim(seekNext(false));
-                if (restRxEvt) restRxEvt(data)
+                if (restRxEvt){
+                    restRxEvt(code, v)
+                }
             }
 
         }
@@ -182,7 +181,7 @@ namespace kittenwifi {
             BaudRate.BaudRate115200
         )
         basic.pause(500)
-        serial.setRxBufferSize(64)
+        serial.setRxBufferSize(192)
         serial.setTxBufferSize(64)
         serial.readString()
         serial.writeString('\n\n')
@@ -383,7 +382,7 @@ namespace kittenwifi {
     */
     //% blockId=on_mqtt_topic_data block="on Mqtt "
     //% weight=81
-    //% blockGap=50
+    //% blockGap=50 draggableParameters=reporter
     export function on_mqtt_topic_data(handler: (topic: string, data: string) => void): void {
         // todo: push may null global definition
         // mqttCb.push(handler)
@@ -429,7 +428,7 @@ namespace kittenwifi {
     */
     //% blockId=udp_ondata block="on UDP data"
     //% weight=76
-    //% blockGap=50
+    //% blockGap=50 draggableParameters=reporter
     export function udp_ondata(handler: (udpData: string) => void): void {
         udpRxEvt = handler;
     }
@@ -474,8 +473,8 @@ namespace kittenwifi {
     */
     //% blockId=rest_ret block="Rest Return"
     //% weight=66
-    //% advanced=true
-    export function rest_ret(handler: (restData: string) => void): void {
+    //% advanced=true draggableParameters=reporter
+    export function rest_ret(handler: (code: number, restData: string) => void): void {
         restRxEvt = handler;
     }
 }
