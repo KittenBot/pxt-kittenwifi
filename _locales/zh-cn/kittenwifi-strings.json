@@ -12,11 +12,14 @@
     "kittenwifi.mqtt_publish_basic|block": "MQTT 广播 话题%topic 内容%data",
     "kittenwifi.mqtt_subscribe|block": "MQTT 订阅话题 %topic||Qos %qos",
     "kittenwifi.mqtt_subscribe_basic|block": "MQTT 订阅话题 %topic",
-    "kittenwifi.on_mqtt_data|block": "MQtt 收到 话题%topic",
+    "kittenwifi.on_mqtt_data|block": "MQTT 收到 话题%topic",
+    "kittenwifi.on_mqtt_topic_data|block": "当收到MQTT消息",
     "kittenwifi.udp_comm|block": "开始UDP通信 ip%addr 端口%port",
     "kittenwifi.udp_send|block": "UDP 发送 %data",
     "kittenwifi.udp_ondata|block": "UDP 收到",
     "kittenwifi.rest_host|block": "Rest 服务器%host 端口%port||secure %secure",
     "kittenwifi.rest_request|block": "Rest 请求 方法%method api%api",
-    "kittenwifi.rest_ret|block": "Rest 返回"
+    "kittenwifi.rest_ret|block": "Rest 返回",
+    "kittenwifi.mqtt_sethost_auth_port|block": "设置MQTT服务器 %host|端口号 %port|节点ID %clientid|用户名 %username|秘钥 %pass",
+    "kittenwifi.ntp_get|block": "获取网络时间"
 }

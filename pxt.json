@@ -1,6 +1,6 @@
 {
     "name": "kittenwifi",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "Extension for Kittenbot Wifi module",
     "license": "MIT",
     "dependencies": {
@@ -9,7 +9,8 @@
     "files": [
         "README.md",
         "main.ts",
-        "_locales/zh/kittenwifi-strings.json"
+        "_locales/zh-cn/kittenwifi-strings.json",
+        "_locales/zh-tw/kittenwifi-strings.json"
     ],
     "testFiles": [
         "test.ts"
