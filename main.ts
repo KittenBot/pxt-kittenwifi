@@ -204,7 +204,7 @@ namespace kittenwifi {
     export function wifi_join(ap: string, pass: string): void {
         let cmd: string = 'WF 52 2 52 ' + ap + ' ' + pass + '\n'
         serial.writeString(cmd)
-        basic.pause(500) // it may took longer to finshed the ap join process
+        basic.pause(1500) // it may took longer to finshed the ap join process
     }
 
     /**
@@ -249,7 +249,7 @@ namespace kittenwifi {
 
     /**
      * Set MQTT set host
-     * @param host Mqtt server ip or address; eg: kittenbot.cn
+     * @param host Mqtt server ip or address; eg: iot.kittenbot.cn
      * @param clientid Mqtt client id; eg: node01
     */
     //% blockId=mqtt_sethost block="MQTT Set Host%host clientID%clientid"
@@ -265,7 +265,7 @@ namespace kittenwifi {
 
     /**
      * Set MQTT set host with port
-     * @param host Mqtt server ip or address; eg: kittenbot.cn
+     * @param host Mqtt server ip or address; eg: iot.kittenbot.cn
      * @param clientid Mqtt client id; eg: node01
      * @param port host port; eg: 1883
     */
@@ -283,7 +283,7 @@ namespace kittenwifi {
 
     /**
      * Set MQTT set host auth
-     * @param host Mqtt server ip or address; eg: kittenbot.cn
+     * @param host Mqtt server ip or address; eg: iot.kittenbot.cn
      * @param clientid Mqtt client id; eg: node01
     */
     //% advanced=true
@@ -300,7 +300,7 @@ namespace kittenwifi {
 
     /**
      * Set MQTT set host auth with port
-     * @param host Mqtt server ip or address; eg: kittenbot.cn
+     * @param host Mqtt server ip or address; eg: iot.kittenbot.cn
      * @param clientid Mqtt client id; eg: node01
      * @param port host port; eg: 1883
     */
@@ -435,7 +435,7 @@ namespace kittenwifi {
 
     /**
      * Set Restful host
-     * @param host Host domain name; eg: kittenbot.cn
+     * @param host Host domain name; eg: iot.kittenbot.cn
      * @param port Host port; eg: 80
     */
     //% blockId=rest_host block="Rest Host %host port %port||secure %secure"
