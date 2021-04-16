@@ -202,9 +202,10 @@ namespace kittenwifi {
     //% blockId=wifi_join block="Wifi Join Aceess Point|%ap Password|%pass"
     //% weight=98
     export function wifi_join(ap: string, pass: string): void {
+        basic.pause(1000)
         let cmd: string = 'WF 52 2 52 ' + ap + ' ' + pass + '\n'
         serial.writeString(cmd)
-        basic.pause(1500) // it may took longer to finshed the ap join process
+        basic.pause(4500) // it may took longer to finshed the ap join process
     }
 
     /**
