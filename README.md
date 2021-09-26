@@ -8,10 +8,12 @@ Make sure you have upgrade firmware of your WiFi module to v2.82 or higher.
 
 ## Feature
 
-- Control wifi access from microbit
-- MQTT control, subscribe publish from microbit
-- RESTFul PUT/GET request to online services, like IFTTT, thingspeak and so on
-- UDP communication with other microbits in LAN
+This extension is designed to programme and drive the wifi moudule, You can [get Wifi module From KittenBot](https://www.kittenbot.cc/collections/frontpage/products/wifi-module-of-powerbrick)
+
+1. Control wifi access from microbit
+2. MQTT control, subscribe publish from microbit
+3. RESTFul PUT/GET request to online services, like IFTTT, thingspeak and so on
+4. UDP communication with other microbits in LAN
 
 ----------
 
