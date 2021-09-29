@@ -1,6 +1,8 @@
 # kittenwifi
 
 Extension for Kittenbot Wifi module
+![intro1](intro.png)
+![intro2](intro-2.png)
 
 ## NOTICE:
 Make sure you have upgrade firmware of your WiFi module to v2.82 or higher.
@@ -8,22 +10,55 @@ Make sure you have upgrade firmware of your WiFi module to v2.82 or higher.
 
 ## Feature
 
+<<<<<<< HEAD
+- Control wifi access from microbit, Simple and effective.
+- MQTT control, subscribe publish from microbit
+- RESTFul PUT/GET request to online services, like IFTTT, thingspeak and so on
+- UDP communication with other microbits in LAN
+=======
 This extension is designed to programme and drive the wifi moudule, You can [get Wifi module From KittenBot](https://www.kittenbot.cc/collections/frontpage/products/wifi-module-of-powerbrick)
 
 1. Control wifi access from microbit
 2. MQTT control, subscribe publish from microbit
 3. RESTFul PUT/GET request to online services, like IFTTT, thingspeak and so on
 4. UDP communication with other microbits in LAN
+>>>>>>> a64a2a872ab456993aa3470864e4945b540a05d0
 
 ----------
 
-# WIFI V2.8+ control protocol
+## Basic usage
 
-## Command definition
+Connect wifi to the 2.4g band wireless network, connect to the MQTT server and subscribe to topics, try to send and receive messages. (KittenBot provides an MQTT server for debugging: https://iot.kittenbot.cn/)
+
+```blocks
+	kittenwifi.on_wifi_connected(function () {
+		basic.showIcon(IconNames.Yes)
+	})
+	input.onButtonPressed(Button.A, function () {
+		kittenwifi.mqtt_sethost("iot.kittenbot.cn", "node01")
+	})
+	input.onButtonPressed(Button.AB, function () {
+		kittenwifi.mqtt_publish_basic("/topicName", "message")
+	})
+	input.onButtonPressed(Button.B, function () {
+		kittenwifi.mqtt_subscribe_basic("/topicName")
+	})
+	kittenwifi.on_mqtt_topic_data(function (topic, data) {
+		basic.showString("" + topic + ":" + data)
+	})
+	kittenwifi.wifi_init(SerialPin.P2, SerialPin.P12)
+	kittenwifi.wifi_join("rrouter", "password")
+
+```
+
+----------
+
+## WIFI V2.8+ control protocol
+
+### Command definition
 
 	WF CMD Argc Callback Argv...
-
-## Recommand Callback Mapping
+### Recommand Callback Mapping
 
 	WIFI_STATUS_CHANGED = 1,
 	MQTT_CONN = 2,
@@ -33,7 +68,7 @@ This extension is designed to programme and drive the wifi moudule, You can [get
 	UDP_SETUP = 6,
 	UDP_DATA = 7
 
-## SYNC command
+### SYNC command
 Sync with wifi module with wifi status change callback 
 
 	WF 1 0 1
@@ -44,7 +79,7 @@ return
 	WF 3 1 1 stat // wifistatus 1: other, 5: got ip
   	WF 3 1 1 5 192.168.0.123
 
-## Wifi Join AP
+### Wifi Join AP
 Join dedicated access point with name and pass word
 
 	WF 52 2 52 ap pass
@@ -53,14 +88,14 @@ successful join would return wifi status 5, eg:
 
 	WF 3 1 1 5
 
-## change wifi module hostname
+### change wifi module hostname
 Hostname for wifi module discover or name connecte or ping, need lan support
 
 	WF 9 1 9 name
 
 No return
 
-## Wifi Module IP get
+### Wifi Module IP get
 Get Ip address of wifi module
 
 	WF 8 0 22
@@ -69,18 +104,18 @@ return
 
 	WF 3 1 22 192.168.0.111
 
-## Mqtt callback install
+### Mqtt callback install
 please refer callback mapping
 
 	WF 10 4 0 2 3 4 5
 
-## MQtt set host
+### MQtt set host
 
 	WF 15 2 15 hostname clientid  
 
 resend mqtt callback install after this command issued
 
-## MQtt subscribe
+### MQtt subscribe
 
 	WF 12 2 0 topic qos
 
@@ -90,11 +125,11 @@ expect callback 5 when someone pub on this topic
 
 	WF 3 2 5 /hello hello world 
 
-## MQtt pub
+### MQtt pub
 
 	WF 11 4 11 qos retain topic data
 
-## MQtt last will message
+### MQtt last will message
 
 	WF 13 4 13 topic data 1 1
 
@@ -102,7 +137,7 @@ Note: this command will get mqtt offline, you should hard reset module to bring 
 
 WF 3 0 5 /hello 1234567890
 
-## UDP comm start
+### UDP comm start
 Target ip and port (for both tx and rx)
 
 	WF 40 3 callback 192.168.0.2 5533 3
@@ -112,18 +147,19 @@ return
 	WF 40 clientNum 0
 
 User should keep track of clientnum in the following process
-### max 4 udp instance and 4 restful instance, you can use both udp and restful in the meanwhile
 
-## UDP Data
+* max 4 udp instance and 4 restful instance, you can use both udp and restful in the meanwhile
+
+### UDP Data
 
 	WF 42 4 clientnum data
 
-## UDP send
+### UDP send
 
 	WF 41 1 cliennum helloworld
 
-## Restful set host
-### the restful client num is irrelevant to udp client num
+### Restful set host
+* the restful client num is irrelevant to udp client num
 
 	WF 20 3 callback kittenbot.cn port(80) security(0 or 1)
 
@@ -131,7 +167,7 @@ return
 
 	WF 20 clientnum 0
 
-## Restful request
+### Restful request
 
 	WF 21 2 cliennum method(GET or POST) /api/xxx? 
 
